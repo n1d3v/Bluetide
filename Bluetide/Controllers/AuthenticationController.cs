@@ -107,11 +107,5 @@ namespace Bluetide.Controllers
             public string? accessJwt { get; set; }
             public string? handle { get; set; }
         }
-
-        // OAuth authentication and authorization classes
-        public class BskyAuth
-        {
-            public string? oauth_token { get; set; }
-        }
     }
 }
