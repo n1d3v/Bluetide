@@ -11,6 +11,7 @@ namespace Bluetide.Controllers
     public class AuthenticationController : Controller
     {
         private readonly API api = new API();
+        private string? bskyAccessJwt = null;
 
         [HttpPost("access_token")]
         public async Task<IActionResult> TwtLogin([FromForm] BskyLogin bskyLogin)
@@ -31,7 +32,6 @@ namespace Bluetide.Controllers
                 password = password
             };
 
-            string? bskyAccessJwt = null;
             string? bskyHandle = null;
             string? bskyDid = null;
             bool failedLogin = false;
@@ -66,16 +66,28 @@ namespace Bluetide.Controllers
                 {
                     bskyAccessJwt = bskySession.accessJwt;
                     bskyHandle = bskySession.handle;
-                    bskyDid = bskySession.did;
+                    bskyDid = bskySession.did.Substring(8); // We remove the first 8 characters (did:plc:) to match a Twitter user ID
                 }
             }
 
-            string resString = $"oauth_token={bskyAccessJwt}&oauth_token_secret={bskyAccessJwt}&user_id={bskyDid}&screen_name={bskyHandle}";
+            // GenerateSecret is kind of like a placeholder, Bluesky doesn't have secrets so this is our way of implementing them.
+            string resString = $"oauth_token={bskyDid}-{bskyAccessJwt}&oauth_token_secret={GenerateSecret()}&user_id={bskyDid}&screen_name={bskyHandle}";
             Debug.WriteLine($"The string that was created is: {resString}");
 
             return Ok(resString);
         }
 
+        // Helper functions
+        public string GenerateSecret()
+        {
+            Random random = new Random();
+            string secretString = new string(Enumerable.Range(0, 40)
+                                                       .Select(_ => bskyAccessJwt[random.Next(bskyAccessJwt.Length)])
+                                                       .ToArray());
+            return secretString;
+        }
+
+        // OAuth login classes
         public class BskyLogin
         {
             public string? x_auth_mode { get; set; }
@@ -94,6 +106,12 @@ namespace Bluetide.Controllers
             public string? did { get; set; }
             public string? accessJwt { get; set; }
             public string? handle { get; set; }
+        }
+
+        // OAuth authentication and authorization classes
+        public class BskyAuth
+        {
+            public string? oauth_token { get; set; }
         }
     }
 }
