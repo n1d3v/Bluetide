@@ -1,0 +1,6 @@
+@Bluetide_HostAddress = http://localhost:2759
+
+GET {{Bluetide_HostAddress}}
+Accept: application/json
+
+###
