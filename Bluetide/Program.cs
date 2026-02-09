@@ -42,7 +42,14 @@ app.Use(async (context, next) =>
     var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
     logger.LogInformation("Received {Method} request to {Path}.", method, combinedPath);
-    logger.LogInformation("The request body of that request is {RequestBody}", requestBody);
+    foreach (var header in context.Request.Headers)
+    {
+        logger.LogInformation("Request header: {Key}: {Value}", header.Key, header.Value);
+    }
+    if (method == "POST")
+    {
+        logger.LogInformation("The request body of that request is {RequestBody}", requestBody);
+    }
 
     context.Request.Body = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(requestBody));
 
