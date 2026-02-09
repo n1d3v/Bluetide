@@ -1,8 +1,8 @@
 ﻿// This is taken from the application CobaltSky, also made by me.
 // You can find it over at https://github.com/n1d3v/CobaltSky/blob/main/CobaltSky/Classes/API.cs
+using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Text;
-using Newtonsoft.Json;
 
 namespace CobaltSky.Classes
 {

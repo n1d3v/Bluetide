@@ -1,0 +1,30 @@
+{
+  "characters_reserved_per_media": 0,
+  "max_media_per_upload": 1,
+  "non_username_paths": [],
+  "photo_size_limit": 1048576,
+  "photo_sizes": {
+    "large": {
+      "w": 1024,
+      "resize": "fit",
+      "h": 2048
+    },
+    "medium": {
+      "w": 600,
+      "resize": "fit",
+      "h": 1200
+    },
+    "small": {
+      "w": 340,
+      "resize": "fit",
+      "h": 480
+    },
+    "thumb": {
+      "w": 150,
+      "resize": "crop",
+      "h": 150
+    }
+  },
+  "short_url_length_https": 0,
+  "short_url_length": 0
+}

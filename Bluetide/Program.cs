@@ -52,7 +52,7 @@ app.Use(async (context, next) =>
 // Used to the read the request body of a POST, PUT or PATCH request
 async Task<string> ReadRequestBodyAsync(Microsoft.AspNetCore.Http.HttpContext context)
 {
-    context.Request.EnableBuffering(); 
+    context.Request.EnableBuffering();
     using (var reader = new System.IO.StreamReader(context.Request.Body, System.Text.Encoding.UTF8, leaveOpen: true))
     {
         var body = await reader.ReadToEndAsync();

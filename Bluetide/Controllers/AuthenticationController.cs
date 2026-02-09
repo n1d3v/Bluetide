@@ -1,8 +1,7 @@
 ﻿using CobaltSky.Classes;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 using Newtonsoft.Json;
-using System.Runtime.CompilerServices;
+using System.Diagnostics;
 
 namespace Bluetide.Controllers
 {
@@ -38,8 +37,9 @@ namespace Bluetide.Controllers
             BskySessionResponse? bskySession = null;
 
             await api.SendAPI("/com.atproto.server.createSession", "POST", login,
-                callback: (response) => {
-                    if (response.Contains("Unauthorized")) 
+                callback: (response) =>
+                {
+                    if (response.Contains("Unauthorized"))
                     {
                         failedLogin = true;
                     }

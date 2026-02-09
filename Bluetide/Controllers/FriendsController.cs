@@ -8,9 +8,10 @@ namespace Bluetide.Controllers
     public class FriendsController : Controller
     {
         [HttpGet("ids.json")]
-        public async Task<IActionResult> TwtFriendIds([FromQuery] TwtId twtId) {
+        public async Task<IActionResult> TwtFriendIds([FromQuery] TwtId twtId)
+        {
             Debug.WriteLine($"The user ID from the query is {twtId.user_id}");
-            
+
             // Returns a dummy JSON file, this is all we need really.
             if (twtId.user_id == 0)
             {
