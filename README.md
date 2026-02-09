@@ -14,6 +14,8 @@ This has also never been done before, unlike the Twitter 1.0 API which has [Blue
 - [x] Twitter OAuth
    - [x] /oauth/access_token
       - Used for the login flow, it is implemented but right now the Twitter app on Windows Phone crashes trying to login and the iOS app (iOS 6) results in an error saying "Error authenticating with Twitter. Please try again.", if you know anything about this, please let me know!
+   - [x] /oauth/request_token
+   - [x] /oauth/authorize
 - [x] Twitter configuration (Developer)
    - [x] /1.1/help/configuration
       - Used to get the details required for Bluetide's server
