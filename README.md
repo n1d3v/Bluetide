@@ -13,7 +13,7 @@ This has also never been done before, unlike the Twitter 1.0 API which has [Blue
 
 - [x] Twitter OAuth
    - [x] /oauth/access_token
-      - Used for the login flow, it is implemented but right now the Twitter app on Windows Phone crashes trying to login and the iOS app (iOS 6) results in an error saying "Error authenticating with Twitter. Please try again.", if you know anything about this, please let me know!
+      - Used for the login flow, is implemented and does work to an extent, scroll to the bottom to see what this means.
    - [x] /oauth/request_token
    - [x] /oauth/authorize
 - [x] Twitter configuration (Developer)
@@ -27,3 +27,14 @@ This has also never been done before, unlike the Twitter 1.0 API which has [Blue
       - Used to get the current terms of service from Bluetide's server
    - [ ] /1.1/application/rate_limit_status
       - Used to get the details of rate limiting from Bluetide's server, not required in our case as Bluesky handles rate limiting. This is implemented but all it does is send 200 OK back to the client.
+
+# Issues with authentication
+There is an issue with authentication on clients like Twitter version 5.7 on iOS and the Windows Phone Twitter client completely crashes signing in, however, we have found some interesting data to do with this:
+
+- Twitter on iOS (iPhone 5 on iOS 6.1.4)
+   - Twitter version 5.3.3: Signs in perfectly fine with no issues.
+   - Twitter version 5.7: Fails with the error "xAuth migration failed - no token/secret handed back".
+   - Twitter version 5.12: Fails with the same error as version 5.7.
+   - Twitter version 6.11: Fails with a vague error along the lines of "Error authenticating with Twitter. Please try again.".
+- Twitter on Windows Phone (Lumia 925 on Windows Phone 8.1 with a patched client)
+   - Twitter version 3.2.3.0: Crashes when trying to authenticate, no error provided.
