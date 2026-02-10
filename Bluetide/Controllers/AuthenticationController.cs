@@ -1,10 +1,12 @@
-﻿using CobaltSky.Classes;
+﻿using System;
+using Bluetide.Classes;
+using CobaltSky.Classes;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Diagnostics;
 using System.Collections.Concurrent;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
-using Bluetide.Classes;
 
 namespace Bluetide.Controllers
 {
@@ -123,7 +125,7 @@ namespace Bluetide.Controllers
                 }
             }
 
-            string resString = $"oauth_token={bskyAccessJwt}&oauth_token_secret=bluesky_is_a_great_platform_with_cookies&user_id={bskyDid}&screen_name={bskyHandle}";
+            string resString = $"oauth_token={bskyAccessJwt}&oauth_token_secret={GenerateToken()}&user_id={bskyDid}&screen_name={bskyHandle}";
             Debug.WriteLine($"The string that was created is: {resString}");
 
             return Ok(resString);
@@ -205,6 +207,29 @@ namespace Bluetide.Controllers
                 }
             }
             return paramsDict;
+        }
+
+
+        public static string GenerateToken(int length = 40)
+        {
+            // Generates an oauth_token_secret, it isn't real but provides something along the lines of it.
+            // Probably not the best way to do this to be fair, could've used something other than Cryptography.
+            string Charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+            char[] result = new char[length];
+            byte[] buffer = new byte[length];
+
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(buffer);
+            }
+
+            for (int i = 0; i < length; i++)
+            {
+                result[i] = Charset[buffer[i] % Charset.Length];
+            }
+
+            return new string(result);
         }
 
         // OAuth helper classes
