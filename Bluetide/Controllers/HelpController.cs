@@ -3,7 +3,7 @@
 namespace Bluetide.Controllers
 {
     [ApiController]
-    [Route("/1.1/help")]
+    [Route("1.1/help")]
     public class HelpController : Controller
     {
         [HttpGet("configuration.json")]
@@ -40,7 +40,7 @@ namespace Bluetide.Controllers
     }
 
     [ApiController]
-    [Route("/1.1/application")]
+    [Route("1.1/application")]
     public class HelpAppController : Controller
     {
         [HttpGet("rate_limit_status.json")]

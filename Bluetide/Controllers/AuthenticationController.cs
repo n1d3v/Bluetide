@@ -11,7 +11,7 @@ using System.Security.Cryptography;
 namespace Bluetide.Controllers
 {
     [ApiController]
-    [Route("/oauth")]
+    [Route("oauth")]
     public class AuthenticationController : Controller
     {
         private static readonly ConcurrentDictionary<string, OAuthTempToken> TempTokens = new();
@@ -120,7 +120,7 @@ namespace Bluetide.Controllers
                     bskyAccessJwt = bskySession.accessJwt;
                     bskyHandle = bskySession.handle;
                     bskyTempDid = bskySession.did;
-                    bskyDid = BaseEncoding.EncodeText(bskyTempDid);
+                    bskyDid = BaseEncoding.EncodeText(bskyTempDid ?? string.Empty);
                     Debug.WriteLine($"The final ID for Bluesky is {bskyDid}, which decodes into {BaseEncoding.DecodeText(bskyDid)}");
                 }
             }
@@ -208,7 +208,6 @@ namespace Bluetide.Controllers
             }
             return paramsDict;
         }
-
 
         public static string GenerateToken(int length = 40)
         {

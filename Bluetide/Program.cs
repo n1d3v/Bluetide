@@ -1,3 +1,5 @@
+﻿using System.Reflection.PortableExecutable;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddLogging();
@@ -42,9 +44,16 @@ app.Use(async (context, next) =>
     var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
     logger.LogInformation("Received {Method} request to {Path}.", method, combinedPath);
-    foreach (var header in context.Request.Headers)
+    // Only uncomment when you really need to, this spams the logs with information.
+    /* foreach (var header in context.Request.Headers)
     {
         logger.LogInformation("Request header: {Key}: {Value}", header.Key, header.Value);
+    } */
+
+    // Kind of a shitty way to check for the the OAuth header, but it works ¯\_(ツ)_/¯
+    if (context.Request.Headers.TryGetValue("Authorization", out var value))
+    {
+        logger.LogInformation("Request header: {Key}: {Value}", "Authorization", value.ToString());
     }
     if (method == "POST")
     {

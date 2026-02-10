@@ -4,7 +4,7 @@ using System.Diagnostics;
 namespace Bluetide.Controllers
 {
     [ApiController]
-    [Route("/1.1/friends")]
+    [Route("1.1/friends")]
     public class FriendsController : Controller
     {
         [HttpGet("ids.json")]
