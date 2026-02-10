@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Collections.Concurrent;
 using System.Security.Cryptography;
+using Bluetide.Classes;
 
 namespace Bluetide.Controllers
 {
@@ -61,36 +62,71 @@ namespace Bluetide.Controllers
         }
 
         [HttpPost("access_token")]
-        public async Task<IActionResult> TwtAccessToken()
+        public async Task<IActionResult> TwtLogin([FromForm] BskyLogin bskyLogin)
         {
-            Debug.WriteLine("Twitter wants to sign in, continuing flow.");
+            Debug.WriteLine("Twitter is trying to sign in!");
 
-            var form = await Request.ReadFormAsync();
-            var username = form["x_auth_username"].ToString();
-            var password = form["x_auth_password"].ToString();
-            var authMode = form["x_auth_mode"].ToString();
+            // This is the data Twitter sends to us from the application
+            // http://web.archive.org/web/20130508171323/https://dev.twitter.com/docs/api/1/post/oauth/access_token
+            string? authMode = bskyLogin.x_auth_mode;
+            string? handle = bskyLogin.x_auth_username;
+            string? password = bskyLogin.x_auth_password;
+
+            Debug.WriteLine($"The device sent us the handle: {handle} and password: {password}");
 
             var login = new LoginRequest
             {
-                identifier = username,
+                identifier = handle,
                 password = password
             };
 
-            BskySessionResponse? session = null;
-            var tcs = new TaskCompletionSource<bool>();
+            string? bskyAccessJwt = null;
+            string? bskyHandle = null;
+            string? bskyTempDid = null;
+            string? bskyDid = null;
+            bool failedLogin = false;
+            BskySessionResponse? bskySession = null;
 
             await api.SendAPI("/com.atproto.server.createSession", "POST", login,
                 callback: (response) =>
                 {
-                    session = JsonConvert.DeserializeObject<BskySessionResponse>(response);
-                    tcs.SetResult(true);
-                });
-            await tcs.Task;
+                    if (response.Contains("Unauthorized"))
+                    {
+                        failedLogin = true;
+                    }
 
-            Debug.WriteLine("Finished API call! Continuing further...");
+                    if (failedLogin)
+                    {
+                        // Continue, later we'll return 401 later.
+                    }
+                    else
+                    {
+                        bskySession = JsonConvert.DeserializeObject<BskySessionResponse>(response);
+                    }
+                }
+            );
 
-            string resString = $"oauth_token={session.accessJwt}&user_id={session.did}&screen_name={session.handle}&x_auth_expires=0";
-            return Content(resString, "application/x-www-form-urlencoded");
+            if (failedLogin)
+            {
+                // Return forbidden manually since we can't use Forbid
+                return StatusCode(401, "Your handle or password is incorrect, please try again!");
+            }
+            else
+            {
+                if (bskySession != null)
+                {
+                    bskyAccessJwt = bskySession.accessJwt;
+                    bskyHandle = bskySession.handle;
+                    bskyTempDid = bskySession.did;
+                    bskyDid = BaseEncoding.EncodeText(bskyTempDid);
+                    Debug.WriteLine($"The final ID for Bluesky is {bskyDid}, which decodes into {BaseEncoding.DecodeText(bskyDid)}");
+                }
+            }
+
+            string resString = $"oauth_token={bskyAccessJwt}&oauth_token_secret=bluesky_is_a_great_platform_with_cookies&user_id={bskyDid}&screen_name={bskyHandle}";
+            Debug.WriteLine($"The string that was created is: {resString}");
+
+            return Ok(resString);
         }
 
         [HttpGet("authorize")]
@@ -209,6 +245,7 @@ namespace Bluetide.Controllers
             public string? x_auth_password { get; set; }
         }
 
+        // Bluesky login classes
         public class LoginRequest
         {
             public string? identifier { get; set; }
